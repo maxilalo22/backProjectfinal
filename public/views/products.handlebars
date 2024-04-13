@@ -1,0 +1,39 @@
+
+<p>Nombre: {{nombre}}</p>
+<p>Apellido: {{apellido}}</p>
+<p>Correo electronico: {{email}}</p>
+
+<a href='/api/sesiones/logout'>Desloguearme!</a>
+
+{{#if products}}
+    <ul>
+        {{#each products}}
+            <li>
+                {{this.title}} - ${{this.price}}
+            <button onclick="agregarAlCarrito('{{this.title}}')">Agregar al Carrito</button>
+            <a href="/api/products/{{this._id}}">Ver Detalles</a>
+            </li>
+        {{/each}}
+    </ul>
+    <a {{#if hasPrevPage}} href="/products/?limit={{limit}}&page={{prevPage}}" {{/if}}>Prev</a>
+    [{{ page }}]
+    <a {{#if hasNextPage}} href="/products/?limit={{limit}}&page={{nextPage}}" {{/if}}>Next</a><br>
+    Página: <input type="text"> <button onclick="irAPag({{limit}})">ir</button>
+{{else}}
+    Nada para mostrar...<br>
+{{/if}}
+
+
+<script src="/js/profile.js"></script>
+<script>
+    function irAPag(limit) {
+        const pagDeseada = document.querySelector('input').value || 1;
+        window.location = `/products/?limit=${limit}&page=${pagDeseada}`;
+    }
+
+    function agregarAlCarrito(title) {
+        alert(`Producto ${title} agregado al carrito`);
+    }
+</script>
+
+

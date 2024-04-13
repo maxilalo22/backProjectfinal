@@ -8,11 +8,11 @@ export async function postController(req, res, next) {
         const encryptedPassword = await encriptar(password); // Encripta la contraseña
         const usuarioPojo = { nombre, email, password: encryptedPassword, role }; // Crea un objeto usuarioPojo
         const usuario = await usuariosService.registrar(usuarioPojo); // Registra el usuario con el servicio
-        res.result(usuario);
+        res.status(201).json(usuario);
         console.log('Usuario creado:', usuario);
     } catch (error) {
         next(error);
-    } 
+    }
 }
 
 
@@ -22,6 +22,15 @@ export async function deleteController(req, res, next) {
     try {
         await usuariosService.darDeBaja(req.params.id)
         res.deleted()
+    } catch (error) {
+        next(error)
+    }
+}
+
+export async function resetPasswordController(req, res, next) {
+    try {
+        req.user = await usuariosService.resetPassword(req.body)
+        next()
     } catch (error) {
         next(error)
     }

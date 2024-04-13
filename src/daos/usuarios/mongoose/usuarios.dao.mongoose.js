@@ -25,15 +25,17 @@ export class UsuariosDaoMongoose {
     }
 
     async updateOne(query, data) {
-        throw new Error('NOT IMPLEMENTED')
+        const options = { new: true }
+        return await this.usuariosModel.findOneAndUpdate(query, data, options).lean();
     }
+    
 
     async updateMany(query, data) {
         throw new Error('NOT IMPLEMENTED')
     }
 
     async deleteOne(query) {
-        return await usuariosModel.findOneAndDelete(query).lean()
+        return await this.usuariosModel.findOneAndDelete(query).lean();
     }
 
     async deleteMany(query) {

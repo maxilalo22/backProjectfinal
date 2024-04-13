@@ -1,0 +1,18 @@
+<h1>Lista de Productos</h1>
+{{#if products}}
+    <ul>
+        {{#each products}}
+            <li>
+                {{this.title}} - ${{this.price}}
+            <button onclick="agregarAlCarrito('{{this.title}}')">Agregar al Carrito</button>
+            <a href="/api/products/{{this._id}}">Ver Detalles</a>
+            </li>
+        {{/each}}
+    </ul>
+    <a {{#if hasPrevPage}} href="/products/?limit={{limit}}&page={{prevPage}}" {{/if}}>Prev</a>
+    [{{ page }}]
+    <a {{#if hasNextPage}} href="/products/?limit={{limit}}&page={{nextPage}}" {{/if}}>Next</a><br>
+    Página: <input type="text"> <button onclick="irAPag({{limit}})">ir</button>
+{{else}}
+    Nada para mostrar...<br>
+{{/if}}

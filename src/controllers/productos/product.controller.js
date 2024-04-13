@@ -9,6 +9,21 @@ export async function getController(req, res, next) {
     }
 }
 
+export async function getProductDetails(req, res, next) {
+    try {
+        const productId = req.params.id;
+        const product = await productService.obtenerProductoPorId(productId);
+        if (!product) {
+            return res.status(404).json({ message: "Producto no encontrado" });
+        }
+        res.render('productDetails', { product });
+    } catch (error) {
+        console.log("Error en getProductDetails:", error);
+        next(error);
+    }
+}
+
+
 export async function postController(req, res, next) {
     try {
         const producto = await productService.agregarProducto(req.body)

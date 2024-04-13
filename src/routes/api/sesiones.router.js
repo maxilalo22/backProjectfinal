@@ -57,7 +57,7 @@ sesionesRouter.get('/', (req, res) => {
     res.send('¡BIENVENIDO!');
 });
 
-sesionesRouter.get('/login', passport.authenticate('login', { failureRedirect: '/faillogin' }), (req, res) => {
+sesionesRouter.post('/login', passport.authenticate('login', { failureRedirect: '/faillogin' }), (req, res) => {
     console.log('Usuario autenticado:', req.user);
     if (req.user) {
         req.session.user = req.user.email;
@@ -81,7 +81,7 @@ sesionesRouter.get('/privado', auth, (req, res) => {
     res.send('¡Bienvenido Admin!');
 });
 
-sesionesRouter.get('/logout', (req, res) => {
+sesionesRouter.post('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             return res.status(500).json({ status: 'error al cerrar sesión', body: err });
@@ -90,12 +90,16 @@ sesionesRouter.get('/logout', (req, res) => {
     });
 });
 
-sesionesRouter.get('/current', passport.authenticate('login', { session: false }), function (req, res) {
-    const usuarioDTO = {
-        nombre: req.user.nombre,
-        email: req.user.email,
-    };
-    res.send({ status: 'success', payload:  usuarioDTO  }); 
+sesionesRouter.get('/current', (req, res) => {
+    if (req.user) {
+        const usuarioDTO = {
+            nombre: req.user.nombre,
+            email: req.user.email,
+        };
+        res.send({ status: 'success', payload: usuarioDTO });
+    } else {
+        res.status(401).send({ status: 'error', error: 'Usuario no autenticado' });
+    }
 });
 
 

@@ -137,6 +137,9 @@ passport.use('role-change', new JwtStrategy({
 
 export const autentication = passport.initialize() */
 
+import { JWT_PRIVATE_KEY } from "../config/config.js";
+import { UsuariosDaoMongoose } from "../daos/usuarios/mongoose/usuarios.dao.mongoose.js";
+
 
 
 
@@ -156,5 +159,23 @@ export async function auth(req, res, next) {
     return res.status(401).send('Unauthorized');
 }
 
+/* passport.use('password-recovery', new JwtStrategy({
+    jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
+    secretOrKey: JWT_PRIVATE_KEY,
+    passReqToCallback: true
+}, async (req, payload, done) => {
+    try {
+        const { userId, newPassword } = req.body; 
+        const user = await UsuariosDaoMongoose.findById(userId);
+        if (!user) {
+            return done(null, false, { message: 'User not found' });
+        }
+        user.password = newPassword;
+        await UsuariosDaoMongoose.updateOne(user);
 
+        done(null, user);
+    } catch (error) {
+        done(error);
+    }
+})); */
 

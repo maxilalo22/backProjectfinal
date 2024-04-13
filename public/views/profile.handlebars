@@ -1,0 +1,14 @@
+<div>
+    <h1>Mi perfil</h1>
+
+    <ul>
+        <li>Nombre: <span id="spanNombre"></span></li>
+        <li>Correo electronico: <span id="spanEmail"></span></li>
+    </ul>
+    <form id="logout-form" action="/api/sesiones/logout" method="POST">
+        <button type="submit">Cerrar Sesión</button>
+    </form>
+
+    <a href="/edit">Editar mis datos</a>
+</div>
+<script src="/static/js/profile.js"></script>
