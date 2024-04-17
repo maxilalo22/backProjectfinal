@@ -11,7 +11,7 @@ import { getDaoUsuarios } from '../daos/usuarios/usuarios.dao.js'
 import { getDaoOrders } from '../daos/orders/order.dao.js'
 
 const tiendasDao = getDaoTiendas()
-const emailService = getEmailService()
+export const emailService = getEmailService()
 export const tiendasService = new TiendasService(tiendasDao, productService)
 
 const suscriptoresDao = getDaoSuscriptores()

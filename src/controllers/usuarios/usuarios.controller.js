@@ -1,5 +1,5 @@
-import { usuariosService } from "../../services/index.js"
-import { encriptar } from "../../daos/utils/encript.js"
+import { emailService, usuariosService } from "../../services/index.js"
+import { encriptar, generarTokenDeRestablecimiento } from "../../daos/utils/encript.js"
 
 // registrar
 export async function postController(req, res, next) {
@@ -27,11 +27,53 @@ export async function deleteController(req, res, next) {
     }
 }
 
+/* export async function resetPasswordController(req, res, next) {
+    try {
+        const { email, newPassword } = req.body;
+        const encryptedPassword = await encriptar(newPassword);
+        req.user = await usuariosService.resetPassword({ email, newPassword: encryptedPassword });
+        res.status(200).json({ message: 'Contraseña actualizada correctamente' });
+    } catch (error) {
+        next(error);
+    }
+} */
+
+
+// En el controlador resetPasswordController
+
+
+
 export async function resetPasswordController(req, res, next) {
     try {
-        req.user = await usuariosService.resetPassword(req.body)
-        next()
+        const { email } = req.body;
+
+        // Verificar si se recibió correctamente el email
+        if (!email) {
+            return res.status(400).json({ message: 'Email no proporcionado' });
+        }
+
+        // Generar un token de restablecimiento de contraseña
+        const token = generarTokenDeRestablecimiento(email);
+
+        // Llamar al servicio de correo electrónico para enviar el correo de restablecimiento
+        await emailService.enviarCorreoDeRestablecimiento(email, token);
+
+        res.status(200).json({ message: 'Correo de restablecimiento de contraseña enviado' });
     } catch (error) {
-        next(error)
+        next(error);
     }
 }
+
+
+
+export async function changePasswordController(req, res, next) {
+    try {
+        const { email, newPassword } = req.body;
+        const encryptedPassword = await encriptar(newPassword);
+        req.user = await usuariosService.resetPassword({ email, newPassword: encryptedPassword });
+        res.status(200).json({ message: 'Contraseña actualizada correctamente' });
+    } catch (error) {
+        next(error);
+    }
+}
+

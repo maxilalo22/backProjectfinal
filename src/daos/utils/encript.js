@@ -46,3 +46,11 @@ export function desencriptar(token) {
         })
     })
 }
+
+export function generarTokenDeRestablecimiento(email) {
+    // Generar un token con la dirección de correo electrónico y una clave secreta
+    // Puedes personalizar la duración de validez del token y otras opciones según tus necesidades
+    const token = jwt.sign({ email: email }, JWT_PRIVATE_KEY, { expiresIn: '30m' });
+    
+    return token;
+}

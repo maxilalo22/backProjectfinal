@@ -7,3 +7,7 @@ newslettersRouter.post('/', postController)
 newslettersRouter.delete('/', deleteController)
 
 newslettersRouter.post('/enviar', postEnviarController)
+
+
+
+
