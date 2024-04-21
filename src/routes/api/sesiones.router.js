@@ -50,6 +50,7 @@ sesionesRouter.delete('/current', removeJwtFromCookies, (req, res) => {
 import { Router } from 'express';
 import { auth } from '../../middlewares/authentication.js';
 import passport from 'passport';
+import { cartsService } from '../../services/carts.services.js';
 
 export const sesionesRouter = Router();
 
@@ -57,9 +58,15 @@ sesionesRouter.get('/', (req, res) => {
     res.send('¡BIENVENIDO!');
 });
 
-sesionesRouter.post('/login', passport.authenticate('login', { failureRedirect: '/faillogin' }), (req, res) => {
+sesionesRouter.post('/login', passport.authenticate('login', { failureRedirect: '/faillogin' }), async (req, res) => {
     console.log('Usuario autenticado:', req.user);
     if (req.user) {
+        // Crear un carrito vacío para el usuario
+        const cartId = await cartsService.createOne(req.user._id); // Aquí se pasa req.user._id como userId
+
+        // Guardar el ID del carrito en la sesión del usuario
+        req.session.cartId = cartId;
+
         req.session.user = req.user.email;
         req.session.admin = req.user.role === 'admin';
         const usuarioDTO = {
@@ -72,10 +79,21 @@ sesionesRouter.post('/login', passport.authenticate('login', { failureRedirect: 
     }
 });
 
+
+
 sesionesRouter.get('/faillogin', (req, res) => {
     console.log('Intento de inicio de sesión fallido');
     res.status(401).send({ error: 'Intento de inicio de sesión fallido' });
 });
+
+sesionesRouter.get('/auth', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.status(200).json({ autenticado: true });
+    } else {
+        res.status(401).json({ autenticado: false });
+    }
+});
+
 
 sesionesRouter.get('/privado', auth, (req, res) => {
     res.send('¡Bienvenido Admin!');
@@ -101,5 +119,16 @@ sesionesRouter.get('/current', (req, res) => {
         res.status(401).send({ status: 'error', error: 'Usuario no autenticado' });
     }
 });
+
+sesionesRouter.post('/cartId', (req, res) => {
+    const { cartId } = req.body;
+    req.session.cartId = cartId;
+    res.sendStatus(200);
+});
+sesionesRouter.get('/cartId', (req, res) => {
+    const cartId = req.session.cartId;
+    res.json({ cartId });
+});
+
 
 

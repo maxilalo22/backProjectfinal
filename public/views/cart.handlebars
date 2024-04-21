@@ -1,0 +1,13 @@
+<h1>Carrito de Compras</h1>
+<ul>
+    {{#each cart}}
+    <li>
+        <h2>{{products.[this.productId].title}}</h2>
+        <p>Precio: ${{products.[this.productId].price}}</p>
+        <p>Cantidad: <button onclick="decreaseQuantity('{{this.productId}}')">-</button>{{this.quantity}}<button
+                onclick="increaseQuantity('{{this.productId}}')">+</button></p>
+        <p>Total: ${{totalPrice this}}</p>
+        <button onclick="removeItem('{{this.productId}}')">Eliminar</button>
+    </li>
+    {{/each}}
+</ul>

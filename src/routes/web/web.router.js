@@ -1,5 +1,7 @@
 import { Router } from 'express'
 import { productService } from '../../services/product.services.js'
+import { getCartController } from '../../controllers/carts/cart.controller.js'
+import { auth } from '../../middlewares/authentication.js'
 
 export const webRouter = Router()
 
@@ -38,7 +40,7 @@ webRouter.get('/edit', function (req, res) {
 
 // ver usuario
 
-webRouter.get('/profile',
+webRouter.get('/profile', 
     (req, res) => {
         res.render('profile.handlebars', {
             pageTitle: 'Perfil',
@@ -53,3 +55,10 @@ webRouter.get('/login', (req, res) => {
         pageTitle: 'Login'
     })
 })
+
+webRouter.get('/cart', getCartController,(req,res)=>{
+    res.render('cart.handlebars', {
+        pageTitle: 'Cart'
+    })
+})
+

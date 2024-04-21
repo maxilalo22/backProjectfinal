@@ -4,6 +4,7 @@ import { currentAdminMiddleware, currentUserMiddleware } from "../../middlewares
 import { postOrderController } from "../../controllers/orders/orders.controllers.js";
 
 
+
 export const cartsRouter = Router();
 
 
@@ -16,7 +17,7 @@ cartsRouter.get("/:id", getCartController);
 cartsRouter.post("/", currentUserMiddleware, postCartController);
 
 
-cartsRouter.post("/:id/product/:pid", currentUserMiddleware, addProductToCartController);
+cartsRouter.post("/:id/product/:pid",currentUserMiddleware, addProductToCartController);
 
 
 cartsRouter.delete("/:id/product/:pid", currentUserMiddleware, deleteProductFromCartController);

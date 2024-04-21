@@ -37,26 +37,27 @@ class CartsService {
         }
     }
 
-    async createOne() {
-        
-        const newCartData = {
-                userId: req.user.id, 
-            }
 
-        try {
-            const newCart = new CartModel({});
-            const createdCart = await this.cartDao.createOne(newCart, newCartData);
-            if (!createdCart) {
-                const error = new Error("No se pudo crear el carrito");
-                error.code = errorMan.UNEXPECTED_ERROR;
-                throw error;
-            }
-            return createdCart;
-        } catch (error) {
-            throw new Error(`Error en CartsService.createOne: ${error}`);
+async createOne(userId) {
+    const newCartData = {
+        userId: userId, 
+    };
+
+    try {
+        const createdCart = await this.cartDao.createOne(newCartData);
+        if (!createdCart) {
+            const error = new Error("No se pudo crear el carrito");
+            error.code = errorMan.UNEXPECTED_ERROR;
+            throw error;
         }
+        return createdCart;
+    } catch (error) {
+        throw new Error(`Error en CartsService.createOne: ${error}`);
     }
-    async createOne(userId) {
+}
+
+    
+    /* async createOne(userId) {
         try {
             const newCartData = {
                 userId: userId, // Asignar el ID del usuario al campo userId del carrito
@@ -68,9 +69,9 @@ class CartsService {
         } catch (error) {
             throw new Error(`Error en CartsService.createOne: ${error.message}`);
         }
-    }
+    } */
 
-    async addProductToCart(cartId, productId, quantity) {
+async addProductToCart(cartId, productId, quantity) {
         try {
             if (!cartId || !productId || !quantity || isNaN(quantity)) {
                 const error = new Error("Se requieren cartId, productId y quantity.");
@@ -81,8 +82,33 @@ class CartsService {
         } catch (error) {
             throw new Error(`Error en CartsService.addProductToCart: ${error}`);
         }
-    }
-
+    } 
+/*     async addProductToCartController(req, res, next) {
+        try {
+            let cartId = req.session.cartId;
+            let productId = req.body.productId || req.params.id;
+            let quantity = req.body.quantity || req.params.quantity || 1;
+    
+            if (!cartId || !productId || isNaN(quantity)) {
+                const error = new Error("Se requieren cartId, productId y quantity.");
+                error.code = errorMan.INCORRECT_DATA;
+                throw error;
+            }
+    
+            let cart = await cartsService.getCartById(cartId);
+    
+            if (!cart) {
+                const userId = req.session.passport.user;
+                cart = await cartsService.createOne(userId);
+            }
+    
+            const updatedCart = await cartsService.addProductToCart(cartId, productId, quantity);
+            res.json(updatedCart);
+        } catch (error) {
+            next(error);
+        }
+    } */
+    
     async deleteProductFromCart(cartId, productId) {
         try {
             if (!cartId || !productId) {

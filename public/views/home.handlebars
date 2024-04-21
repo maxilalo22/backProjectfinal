@@ -4,8 +4,8 @@
         {{#each products}}
             <li>
                 {{this.title}} - ${{this.price}}
-            <button onclick="agregarAlCarrito('{{this.title}}')">Agregar al Carrito</button>
-            <a href="/api/products/{{this._id}}">Ver Detalles</a>
+                <button class="addToCart" data-product-id="{{this._id}}">Agregar al Carrito</button>
+                <a href="/api/products/{{this._id}}">Ver Detalles</a>
             </li>
         {{/each}}
     </ul>
@@ -16,3 +16,6 @@
 {{else}}
     Nada para mostrar...<br>
 {{/if}}
+
+<script src="/static/home2.js"></script>
+

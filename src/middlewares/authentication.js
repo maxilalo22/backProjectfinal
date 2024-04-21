@@ -152,7 +152,8 @@ export async function auth(req, res, next) {
     if (req.isAuthenticated() && req.session.admin) {
         
         console.log("Authentication successful!");
-        return next();
+        //return next();
+        res.redirect('/login');
     }
 
     console.log("Authentication failed!");

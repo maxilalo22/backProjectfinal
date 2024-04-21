@@ -9,11 +9,7 @@
     <h1>{{product.title}}</h1>
     <p>Descripción: {{product.description}}</p>
     <p>Precio: ${{product.price}}</p>
-    <button onclick="agregarAlCarrito('{{product.title}}')">Agregar al Carrito</button>
+    <button class="addToCart('{{product.title}}')">Agregar al Carrito</button>
 </body>
 </html>
-<script>
-    function agregarAlCarrito(title) {
-        alert(`Producto ${title} agregado al carrito`);
-    }
-</script>
+
