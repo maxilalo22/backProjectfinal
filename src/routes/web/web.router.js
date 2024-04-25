@@ -7,10 +7,13 @@ export const webRouter = Router()
 
 webRouter.get('/', async (req, res) => {
     try {
+        let cartId = null
+        if(req.user){
+            cartId = req.user.cart._id 
+        }
         const products = await productService.obtenerProductos()
-        res.render('home.handlebars', { pageTitle: 'Lista de Productos', products: products })
+        res.render('home.handlebars', { pageTitle: 'Lista de Productos', products: products, cartId })
     } catch (error) {
-        // Manejo de errores
         console.error(error)
         res.status(500).send('Error obteniendo productos.')
     }

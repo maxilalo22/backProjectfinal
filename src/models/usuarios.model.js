@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+import { CartModel } from './cart.model.js'
 
 
 export class Usuario {
@@ -6,17 +7,21 @@ export class Usuario {
     #nombre
     #email
     #password
+    #cart
 
-    constructor({ _id = randomUUID(), nombre, email, password }) {
+
+    constructor({ _id = randomUUID(), nombre, email, password, cart }) {
         this.#_id = _id
         this.nombre = nombre
         this.email = email
         this.password = password
+        this.cart = new CartModel
     }
 
     get _id() { return this.#_id }
     get nombre() { return this.#nombre }
     get email() { return this.#email }
+    get cart(){ return this.#cart}
 
     set nombre(value) {
         if (!value) throw new Error('el nombre es obligatorio')
@@ -33,6 +38,10 @@ export class Usuario {
         this.#password = value
     }
 
+    set cart(value) {
+        this.#cart = value
+    }
+
     get password() {
         return this.#password
     }
@@ -42,7 +51,9 @@ export class Usuario {
             _id: this.#_id,
             nombre: this.#nombre,
             email: this.#email,
-            password: this.#password
+            password: this.#password,
+            cart: this.#cart
+            
         }
     }
 }

@@ -4,7 +4,6 @@ import { randomUUID } from "node:crypto";
 const cartSchema = new Schema(
     {
         _id: { type: String, default: randomUUID },
-        userId: { type: String, required: true }, // Nuevo campo para almacenar el ID del usuario
         _productos: {
             type: [
                 {

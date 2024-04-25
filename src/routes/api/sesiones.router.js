@@ -61,17 +61,14 @@ sesionesRouter.get('/', (req, res) => {
 sesionesRouter.post('/login', passport.authenticate('login', { failureRedirect: '/faillogin' }), async (req, res) => {
     console.log('Usuario autenticado:', req.user);
     if (req.user) {
-        // Crear un carrito vacío para el usuario
-        const cartId = await cartsService.createOne(req.user._id); // Aquí se pasa req.user._id como userId
-
-        // Guardar el ID del carrito en la sesión del usuario
-        req.session.cartId = cartId;
-
+        console.log(req.user)
         req.session.user = req.user.email;
+        req.session.cartId = req.user.cart._id
         req.session.admin = req.user.role === 'admin';
         const usuarioDTO = {
             nombre: req.user.name,
             email: req.user.email,
+            cart: req.user.cart._id
         };
         res.send({ status: 'success', payload: usuarioDTO });
     } else {
@@ -110,9 +107,12 @@ sesionesRouter.post('/logout', (req, res) => {
 
 sesionesRouter.get('/current', (req, res) => {
     if (req.user) {
+
         const usuarioDTO = {
             nombre: req.user.nombre,
             email: req.user.email,
+            role: req.user.role,
+            cartId: req.user.cart._id
         };
         res.send({ status: 'success', payload: usuarioDTO });
     } else {

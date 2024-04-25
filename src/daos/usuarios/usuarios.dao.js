@@ -23,3 +23,4 @@ if (MODO_EJECUCION === 'online') {
 export function getDaoUsuarios() {
     return daoUsuarios
 } 
+export default daoUsuarios;

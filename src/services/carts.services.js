@@ -38,13 +38,10 @@ class CartsService {
     }
 
 
-async createOne(userId) {
-    const newCartData = {
-        userId: userId, 
-    };
+async createOne() {
 
     try {
-        const createdCart = await this.cartDao.createOne(newCartData);
+        const createdCart = await this.cartDao.createOne();
         if (!createdCart) {
             const error = new Error("No se pudo crear el carrito");
             error.code = errorMan.UNEXPECTED_ERROR;
@@ -71,18 +68,19 @@ async createOne(userId) {
         }
     } */
 
-async addProductToCart(cartId, productId, quantity) {
+    async addProductToCart(req, cartId, productId, quantity) {
         try {
-            if (!cartId || !productId || !quantity || isNaN(quantity)) {
-                const error = new Error("Se requieren cartId, productId y quantity.");
+            if (!req || !cartId || !productId || !quantity || isNaN(quantity)) {
+                const error = new Error("Se requieren req, cartId, productId y quantity válidos.");
                 error.code = errorMan.INCORRECT_DATA;
                 throw error;
             }
-            return await this.cartDao.updateOne(cartId, productId, quantity);
+            return await this.cartDao.updateOne(req, productId, quantity);
         } catch (error) {
             throw new Error(`Error en CartsService.addProductToCart: ${error}`);
         }
-    } 
+    }
+    
 /*     async addProductToCartController(req, res, next) {
         try {
             let cartId = req.session.cartId;

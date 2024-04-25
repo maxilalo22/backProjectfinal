@@ -60,10 +60,10 @@ export async function postCartController(req, res, next) {
 
 export async function addProductToCartController(req, res, next) {
     try {
-        const { id: cartId, pid } = req.params;
+        const { id, pid } = req.params;
         const { quantity = 1 } = req.body;
         
-        const updatedCart = await cartsService.addProductToCart(cartId, pid, quantity);
+        const updatedCart = await cartsService.addProductToCart(req,id, pid, quantity);
         res.json(updatedCart);
     } catch (error) {
         next(error);
