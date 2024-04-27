@@ -109,6 +109,7 @@ sesionesRouter.get('/current', (req, res) => {
     if (req.user) {
 
         const usuarioDTO = {
+            id: req.user._id,
             nombre: req.user.nombre,
             email: req.user.email,
             role: req.user.role,

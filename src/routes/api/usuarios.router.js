@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { changePasswordController, deleteController, postController, resetPasswordController } from '../../controllers/usuarios/usuarios.controller.js'
+import { changePasswordController, deleteController, postController, resetPasswordController, updateUserRoleController } from '../../controllers/usuarios/usuarios.controller.js'
 import jwt from 'jsonwebtoken';
 import { JWT_PRIVATE_KEY } from '../../config/config.js';
 
@@ -35,3 +35,4 @@ usuariosRouter.delete('/:id', deleteController)
 
 usuariosRouter.patch('/resetpassword', resetPasswordController)
 usuariosRouter.patch('/changepassword', changePasswordController)
+usuariosRouter.post('/updateRole', updateUserRoleController)

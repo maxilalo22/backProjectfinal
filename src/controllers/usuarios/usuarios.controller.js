@@ -76,4 +76,15 @@ export async function changePasswordController(req, res, next) {
         next(error);
     }
 }
+export async function updateUserRoleController(req, res, next) {
+    try {
+        const { usuario, rolNuevo } = req.body;
+        await usuariosService.updateRole({ usuario, newRole: rolNuevo });
+        res.status(200).json({ message: 'Rol actualizado correctamente! '});
+    } catch (error) {
+        console.log(error); // Imprime el error en la consola para depuración
+        next(error); // Pasa el error al siguiente middleware de manejo de errores
+    }
+}
+
 

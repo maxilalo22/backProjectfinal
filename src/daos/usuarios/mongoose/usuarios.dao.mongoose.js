@@ -15,7 +15,7 @@ export class UsuariosDaoMongoose {
     async readOne(query) {
         return toPOJO(await this.usuariosModel.findOne(query).lean())
     }
-
+    
     async readMany(query) {
         return toPOJO(await this.usuariosModel.find(query).lean())
     }

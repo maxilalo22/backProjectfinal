@@ -62,4 +62,28 @@ export class UsuariosService {
             throw error;
         }
     }
+
+    async updateRole(userData) {
+        console.log("Service", userData.usuario)
+        try {
+            const { usuario, newRole } = userData;
+            console.log(usuario,"....", newRole)
+            if (!usuario) {
+                throw new Error('Usuario no proporcionado');
+            }
+            const user = await this.usuariosDao.readOne({ _id: usuario });
+
+            if (!user) {
+                throw new Error('Usuario no encontrado');
+            }
+            user.role = newRole;
+            const updateUserDoc = await this.usuariosDao.updateOne({ _id: user._id }, user);
+            console.log(updateUserDoc);
+            return updateUserDoc;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+    
 }

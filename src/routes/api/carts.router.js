@@ -24,7 +24,7 @@ cartsRouter.delete("/:id/product/:pid", currentUserMiddleware, deleteProductFrom
 
 
 cartsRouter.put("/:id/product/:pid", currentUserMiddleware, updateProductCartController);
-
+//cartsRouter.put("/current", currentUserMiddleware ,updateCurrentCartController)
 
 cartsRouter.delete("/:id", currentAdminMiddleware, deleteCartController);
 

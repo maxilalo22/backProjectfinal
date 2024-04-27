@@ -1,0 +1,20 @@
+<div>
+    <h1>ACTUALIZAR SUSCRIPCIÓN</h1>
+
+    <h2>Mi suscripción actual: {{role}}</h2>
+
+    <h3>Desea modificar su suscripción?</h3>
+    
+    <form id="updateSuscrip" action="/api/usuarios/updateRole" method="POST">
+    <input type="hidden" name="usuario" value="{{usuarioId}}">
+    <select name="rolNuevo">
+        <option value="usuario-comun">Usuario Común</option>
+        <option value="premium">Premium</option>
+    </select>
+    <button type="submit">ACTUALIZAR</button>
+</form>
+
+</div>
+
+
+

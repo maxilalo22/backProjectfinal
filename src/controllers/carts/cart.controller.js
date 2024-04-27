@@ -116,4 +116,44 @@ export async function deleteCartController(req, res, next) {
     }
     
 
+export async function updateCurrentCartController(req,res,next){
+    try {
+        if(req.user){
+            const userId = req.user._id;
+            const cartId = req.user.cart._id
+            let cart = await  cartsService.getCartById(cartId)
 
+        }
+        
+        
+        // Obtén los datos de la solicitud (el ID del producto y la nueva cantidad)
+        const { productId, newQuantity } = req.body;
+
+        // Busca el carrito del usuario logueado en la base de datos
+        let cart = await Cart.findOne({ userId });
+
+        // Si el carrito no existe, puedes manejarlo según tus necesidades (crear uno nuevo, devolver un error, etc.)
+        if (!cart) {
+            return res.status(404).json({ message: 'El carrito del usuario no existe' });
+        }
+
+        // Encuentra el índice del producto en el carrito del usuario
+        const index = cart.items.findIndex(item => item.productId === productId);
+
+        // Si el producto no está en el carrito, puedes manejarlo según tus necesidades
+        if (index === -1) {
+            return res.status(404).json({ message: 'El producto no está en el carrito' });
+        }
+
+        // Actualiza la cantidad del producto en el carrito
+        cart.items[index].quantity = newQuantity;
+
+        // Guarda los cambios en el carrito
+        await cart.save();
+
+        // Responde con un mensaje de éxito
+        res.json({ message: 'Cantidad de producto actualizada correctamente en el carrito' });
+    } catch (error) {
+        
+    }
+}
