@@ -5,13 +5,13 @@ console.log('cargando config')
 dotenv.config()
 
 export const PORT = 8080
-export const MONGODB_CNX_STR = 'mongodb+srv://maxvenditti94:mendoza110@cluster0.zyyalew.mongodb.net/'
+export const MONGODB_CNX_STR = process.env.MONGODB_CNX_STR  || "mongodb://localhost:8080"
 export const MODO_EJECUCION = 'online'
 //export const MODO_EJECUCION = 'offline'
 
-export const COOKIE_SECRET = 'CookieMonsterSecret'
-export const SESSION_SECRET = 'SecretWithBanana'
-export const JWT_PRIVATE_KEY = 'jwtSecret'
+export const COOKIE_SECRET = process.env.COOKIE_SECRET
+export const SESSION_SECRET = process.env.SESSION_SECRET
+export const JWT_PRIVATE_KEY = process.env.JWT_PRIVATE_KEY
 
 
 export const ADMIN_SMS_NUMBER = process.env.ADMIN_SMS_NUMBER
