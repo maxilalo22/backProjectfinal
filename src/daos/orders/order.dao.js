@@ -12,11 +12,9 @@ if (MODO_EJECUCION === 'online') {
     if (!daoOrders) {
         const ordersModel = model('Orders',orderSchema); 
         daoOrders = new OrdersDaoMongoose(ordersModel); 
-        console.log('Persistiendo órdenes en MongoDB');
     }
 } else {
     daoOrders = new OrdersDaoFiles(RUTA_ORDERS_JSON); 
-    console.log('Persistiendo órdenes en el sistema de archivos');
 }
 
 

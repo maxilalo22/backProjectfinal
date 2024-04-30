@@ -1,29 +1,4 @@
-/* const formResetPwd = document.querySelector('form')
 
-formResetPwd?.addEventListener('submit', async event => {
-    event.preventDefault()
-
-    const response = await fetch('/api/usuarios/resetpassword', {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams(new FormData(formResetPwd))
-    })
-    
-    if (response.status === 200) {
-        console.log("Contraseña actualizada correctamente!");
-        alert("Contraseña actualizada correctamente!");
-        window.location.href = '/login';
-    } else {
-        const error = await response.json();
-        console.log(error.message);
-        //alert(error.message);
-    }
-    
-}) */
-
-// Importar el servicio de correo electrónico
 const formResetPwd = document.querySelector('#resetPasswordForm');
 
 formResetPwd.addEventListener('submit', async event => {
@@ -42,7 +17,6 @@ formResetPwd.addEventListener('submit', async event => {
         });
 
         if (response.ok) {
-            console.log("Correo de restablecimiento enviado correctamente!");
             alert("Se ha enviado un correo de restablecimiento de contraseña. Por favor, revise su bandeja de entrada.");
         } else {
             const error = await response.json();

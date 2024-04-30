@@ -13,11 +13,9 @@ if (MODO_EJECUCION === 'online') {
     if (!daoUsuarios) {
         const usuariosModel = model('usuarios', usuariosSchema)
         daoUsuarios = new UsuariosDaoMongoose(usuariosModel)
-        console.log('persistiendo usuarios en: mongodb')
     }
 } else {
     daoUsuarios = new UsuariosDaoFiles(RUTA_USUARIOS_JSON)
-    console.log('persistiendo usuarios en: sistema de archivos')
 }
 
 export function getDaoUsuarios() {

@@ -1,6 +1,6 @@
 import { newslettersService } from "../../services/index.js"
 
-// suscribirse
+
 export async function postController(req, res, next) {
     try {
         const suscriptor = await newslettersService.suscribirse(req.body)
@@ -10,7 +10,7 @@ export async function postController(req, res, next) {
     }
 }
 
-// desuscribirse
+
 export async function deleteController(req, res, next) {
     try {
         await newslettersService.desuscribirse(req.body)
@@ -21,9 +21,6 @@ export async function deleteController(req, res, next) {
 }
 
 
-// para pruebas!! luego se hace un cron job
-
-// enviar newsletters
 export async function postEnviarController(req, res, next) {
     try {
         await newslettersService.enviar()

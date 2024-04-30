@@ -1,5 +1,6 @@
 import { cartsService } from "../../services/carts.services.js"
 import { errorMan } from "../../daos/utils/errorMan.js"
+import daoUsuarios from "../../daos/usuarios/usuarios.dao.js";
 
 export async function getCartsController(req, res, next) {
     try {
@@ -18,31 +19,27 @@ export async function getCartsController(req, res, next) {
 
 export async function getCartController(req, res, next) {
     try {
-        const { id } = req.params;
-        if (!id) {
-            const error = new Error("El ID es requerido");
-            error.code = errorMan.INCORRECT_DATA;
-            throw error;
+        let cartId = null;
+        let cart = null
+        if (req.user) {
+            cartId = req.user.cart._id;
+            cart = req.user.cart
+        } else {
+            cartId = req.params.id;
         }
-
-        const cart = await cartsService.readOne(id);
-        if (!cart) {
-            const error = new Error(`No se encontró ningún carrito con el ID ${id}`);
-            error.code = errorMan.NOT_FOUND;
-            throw error;
-        }
-
-        res.json(cart);
+        res.json({ cart });
     } catch (error) {
-        next(error);
+        console.error('Error in getCartController:', error);
+        res.status(500).json({ status: 'error', message: 'Internal server error' });
     }
 }
+
 
 export async function postCartController(req, res, next) {
     try {
         const userId = req.session.passport.user;
-        const cartId = req.session.cartId 
-        const newCart = await cartsService.createOne(userId,cartId);
+        const cartId = req.session.cartId
+        const newCart = await cartsService.createOne(userId, cartId);
         if (!newCart) {
             const error = new Error("No se pudo crear el carrito");
             error.code = errorMan.UNEXPECTED_ERROR;
@@ -62,8 +59,8 @@ export async function addProductToCartController(req, res, next) {
     try {
         const { id, pid } = req.params;
         const { quantity = 1 } = req.body;
-        
-        const updatedCart = await cartsService.addProductToCart(req,id, pid, quantity);
+
+        const updatedCart = await cartsService.addProductToCart(req, id, pid, quantity);
         res.json(updatedCart);
     } catch (error) {
         next(error);
@@ -74,19 +71,21 @@ export async function updateProductCartController(req, res, next) {
     try {
         const { id, pid } = req.params;
         const { quantity } = req.body;
-
-        const updatedCart = await cartsService.addProductToCart(id, pid, quantity);
+        const cart = req.user.cart
+        const updatedCart = await cartsService.addProductToCart(req,cart, pid, quantity);
         res.json(updatedCart);
     } catch (error) {
         next(error);
     }
 }
 
+
 export async function deleteProductFromCartController(req, res, next) {
     try {
         const { id, pid } = req.params;
+        const cart = req.user.cart
 
-        const updatedCart = await cartsService.deleteProductFromCart(id, pid);
+        const updatedCart = await cartsService.deleteProductFromCart(req,cart, pid);
         res.json(updatedCart);
     } catch (error) {
         next(error);
@@ -96,64 +95,52 @@ export async function deleteProductFromCartController(req, res, next) {
 export async function deleteProductsFromCartController(req, res, next) {
     try {
         const { id } = req.params;
-
-        const updatedCart = await cartsService.deleteProductsFromCart(id);
+        const usuarios = await daoUsuarios.findByCartId(id);
+        if (!usuarios || usuarios.length === 0) {
+            const error = new Error("No se encontraron usuarios con el carrito proporcionado.");
+            error.code = errorMan.NOT_FOUND;
+            throw error;
+        }
+        const usuario = usuarios[0];
+        const updatedCart = await cartsService.deleteProductsFromCart(usuario);
         res.json(updatedCart);
     } catch (error) {
         next(error);
     }
 }
 
+
 export async function deleteCartController(req, res, next) {
-        try {
-            const { id } = req.params;
-    
-            const deletedCart = await cartsService.deleteCart(id);
-            res.json(deletedCart);
-        } catch (error) {
-            next(error);
-        }
-    }
-    
-
-export async function updateCurrentCartController(req,res,next){
     try {
-        if(req.user){
-            const userId = req.user._id;
-            const cartId = req.user.cart._id
-            let cart = await  cartsService.getCartById(cartId)
+        const { id } = req.params;
+        const deletedCart = await cartsService.deleteCart(id);
+        res.json(deletedCart);
+    } catch (error) {
+        next(error);
+    }
+}
 
-        }
-        
-        
-        // Obtén los datos de la solicitud (el ID del producto y la nueva cantidad)
-        const { productId, newQuantity } = req.body;
 
-        // Busca el carrito del usuario logueado en la base de datos
-        let cart = await Cart.findOne({ userId });
-
-        // Si el carrito no existe, puedes manejarlo según tus necesidades (crear uno nuevo, devolver un error, etc.)
-        if (!cart) {
+export async function updateCurrentCartController(req, res, next) {
+    try {
+        let cart = null;
+        if (req.user && req.user.cart) {
+            cart = req.user.cart;
+            console.log("Controler", cart._id);
+        } else {
             return res.status(404).json({ message: 'El carrito del usuario no existe' });
         }
 
-        // Encuentra el índice del producto en el carrito del usuario
-        const index = cart.items.findIndex(item => item.productId === productId);
+        const { pid } = req.params;
+        const { quantity: newQuantity } = req.body;
+        console.log(pid, newQuantity);
 
-        // Si el producto no está en el carrito, puedes manejarlo según tus necesidades
-        if (index === -1) {
-            return res.status(404).json({ message: 'El producto no está en el carrito' });
-        }
+        const updatedCart = await cartsService.addProductToCart(req, cart._id, pid, newQuantity);
 
-        // Actualiza la cantidad del producto en el carrito
-        cart.items[index].quantity = newQuantity;
-
-        // Guarda los cambios en el carrito
-        await cart.save();
-
-        // Responde con un mensaje de éxito
         res.json({ message: 'Cantidad de producto actualizada correctamente en el carrito' });
     } catch (error) {
-        
+        next(error);
     }
 }
+
+

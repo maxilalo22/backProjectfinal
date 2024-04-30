@@ -17,13 +17,3 @@ export const usuariosSchema = new Schema({
     versionKey: false
 });
 
-/* usuariosSchema.statics.registrar = async function(userData) {
-    try {
-        // Encripta la contraseña antes de crear el usuario
-        userData.password = await encriptar(userData.password);
-        const user = await model(collName).create(userData);
-        return user.toObject();
-    } catch (error) {
-        throw new Error(error.message);
-    }
-}; */

@@ -1,6 +1,7 @@
 import { getDaoCarts } from '../daos/carts/carts.dao.js';
-import { CartModel } from "../models/cart.model.js";
 import { errorMan } from "../daos/utils/errorMan.js";
+import daoUsuarios from '../daos/usuarios/usuarios.dao.js';
+import { toPOJO } from '../daos/utils/utils.js';
 
 class CartsService {
     constructor() {
@@ -53,21 +54,6 @@ async createOne() {
     }
 }
 
-    
-    /* async createOne(userId) {
-        try {
-            const newCartData = {
-                userId: userId, // Asignar el ID del usuario al campo userId del carrito
-                // Otros datos del carrito si los hay
-            };
-
-            const newCart = await this.cartDao.createOne(newCartData);
-            return newCart;
-        } catch (error) {
-            throw new Error(`Error en CartsService.createOne: ${error.message}`);
-        }
-    } */
-
     async addProductToCart(req, cartId, productId, quantity) {
         try {
             if (!req || !cartId || !productId || !quantity || isNaN(quantity)) {
@@ -81,57 +67,34 @@ async createOne() {
         }
     }
     
-/*     async addProductToCartController(req, res, next) {
+    async deleteProductFromCart(req,id, pid) {
         try {
-            let cartId = req.session.cartId;
-            let productId = req.body.productId || req.params.id;
-            let quantity = req.body.quantity || req.params.quantity || 1;
-    
-            if (!cartId || !productId || isNaN(quantity)) {
-                const error = new Error("Se requieren cartId, productId y quantity.");
+            if (!req || !id || !pid) {
+                const error = new Error("Se requieren req, cartId y productId.");
                 error.code = errorMan.INCORRECT_DATA;
                 throw error;
             }
-    
-            let cart = await cartsService.getCartById(cartId);
-    
-            if (!cart) {
-                const userId = req.session.passport.user;
-                cart = await cartsService.createOne(userId);
-            }
-    
-            const updatedCart = await cartsService.addProductToCart(cartId, productId, quantity);
-            res.json(updatedCart);
-        } catch (error) {
-            next(error);
-        }
-    } */
-    
-    async deleteProductFromCart(cartId, productId) {
-        try {
-            if (!cartId || !productId) {
-                const error = new Error("Se requieren cartId y productId.");
-                error.code = errorMan.INCORRECT_DATA;
-                throw error;
-            }
-            return await this.cartDao.deleteProductFromCart(cartId, productId);
+            return await this.cartDao.deleteProductFromCart(req, id, pid);
         } catch (error) {
             throw new Error(`Error en CartsService.deleteProductFromCart: ${error}`);
         }
     }
 
-    async deleteProductsFromCart(cartId) {
+    async deleteProductsFromCart(user) {
         try {
-            if (!cartId) {
-                const error = new Error("Se requiere un cartId.");
+            if (!user) {
+                const error = new Error("Se requiere un usuario.");
                 error.code = errorMan.INCORRECT_DATA;
                 throw error;
             }
-            return await this.cartDao.deleteProductsFromCart(cartId);
+            user.cart._productos = []
+            await daoUsuarios.updateOne({ _id: user._id }, { cart: user.cart });
+            return toPOJO(user.cart);
         } catch (error) {
             throw new Error(`Error en CartsService.deleteProductsFromCart: ${error}`);
         }
     }
+    
 
     async deleteCart(cartId) {
         try {
@@ -143,6 +106,34 @@ async createOne() {
             return await this.cartDao.deleteCart(cartId);
         } catch (error) {
             throw new Error(`Error en CartsService.deleteCart: ${error}`);
+        }
+    }
+
+    async updateIdCart(oldCartId, newCartId) {
+        try {
+            const updatedCart = await this.cartDao.updateIdCart(oldCartId, newCartId);
+            return updatedCart;
+        } catch (error) {
+            throw new Error(`Error en CartService.updateIdCart: ${error.message}`);
+        }
+    }
+
+    async updateLastCartWithUserId(oldCartId, newCartId) {
+        try {
+            const lastCart = await this.cartDao.getLastCart();
+            console.log("Serv LasCart", lastCart)
+            if (!lastCart) {
+                throw new Error("No se encontró ningún carrito en la base de datos.");
+            }
+            if (lastCart._id === oldCartId) {
+                lastCart._id = newCartId;
+                console.log(newCartId)
+                await this.cartDao.updateIdCart(oldCartId, newCartId);
+            }
+
+            return lastCart;
+        } catch (error) {
+            throw new Error(`Error en CartService.updateLastCartWithUserId: ${error.message}`);
         }
     }
 }

@@ -20,7 +20,6 @@ export class OrdersDaoFiles {
             const orders = await this.getAllOrders();
             orders.push(order);
             await fs.writeFile(this.path, JSON.stringify(orders, null, 2));
-            console.log('Order added successfully.');
         } catch (error) {
             console.error('Error adding order:', error);
         }
@@ -43,7 +42,6 @@ export class OrdersDaoFiles {
             if (index !== -1) {
                 orders[index] = { ...orders[index], ...updatedOrder };
                 await fs.writeFile(this.path, JSON.stringify(orders, null, 2));
-                console.log('Order updated successfully.');
                 return true;
             } else {
                 console.error('Order not found.');
@@ -61,7 +59,6 @@ export class OrdersDaoFiles {
             const filteredOrders = orders.filter(order => order._id !== id);
             if (orders.length !== filteredOrders.length) {
                 await fs.writeFile(this.path, JSON.stringify(filteredOrders, null, 2));
-                console.log('Order deleted successfully.');
                 return true;
             } else {
                 console.error('Order not found.');

@@ -3,7 +3,7 @@ import daoUsuarios from "../../usuarios/usuarios.dao.js";
 import { toPOJO } from "../../utils/utils.js";
 
 export class CartsDaoMongoose {
-    constructor(cartsModel, usuariosModel) {
+    constructor(cartsModel) {
         this.cartsModel = cartsModel;
     }
 
@@ -18,7 +18,7 @@ export class CartsDaoMongoose {
 
     async readOne(id) {
         try {
-            const cart = await this.cartsModel.findById(id).lean();
+            const cart = await this.cartsModel.findOne(id).lean();
             return toPOJO(cart);
         } catch (error) {
             throw new Error(`Error en CartsDaoMongoose.readOne: ${error.message}`);
@@ -33,7 +33,15 @@ export class CartsDaoMongoose {
             throw new Error(`Error en CartsDaoMongoose.createOne: ${error.message}`);
         }
     }
-
+    async updateIdCart(oldCartId, newCartId) {
+        try {
+            await this.cartsModel.deleteOne({ _id: oldCartId });
+            const newCart = await this.cartsModel.create({ _id: newCartId })
+            return newCart;
+        } catch (error) {
+            throw new Error(`Error en CartsDaoMongoose.updateIdCart: ${error.message}`);
+        }
+    }
     async updateOne(req, productId, quantity) {
         try {
             if (!req || !req.user || !req.user._id || !productId || !quantity || isNaN(quantity)) {
@@ -41,59 +49,55 @@ export class CartsDaoMongoose {
                 error.code = errorMan.INCORRECT_DATA;
                 throw error;
             }
-    
+
             const userId = req.user._id;
             const usuario = await daoUsuarios.findById(userId);
-    
+
             if (!usuario) {
                 const error = new Error("Usuario no encontrado");
                 error.code = errorMan.NOT_FOUND;
                 throw error;
             }
-    
-            // Obtener el carrito del usuario
+
             const cart = usuario.cart;
-    
-            // Verificar si el producto ya existe en el carrito
             const existingProduct = cart._productos.find(product => product._id === productId);
-    
+
             if (existingProduct) {
-                existingProduct.quantity += parseInt(quantity);
+                existingProduct.quantity = parseInt(quantity);
                 if (existingProduct.quantity <= 0) {
-                    // Si la cantidad es cero o menor, eliminar el producto del carrito
                     cart._productos = cart._productos.filter(product => product._id !== productId);
                 }
             } else {
-                // Si el producto no está en el carrito, agregarlo
                 if (parseInt(quantity) > 0) {
                     cart._productos.push({ _id: productId, quantity: parseInt(quantity) });
                 }
             }
-    
 
 
-        await daoUsuarios.updateOne({ _id: userId }, usuario);
 
-        return usuario.cart;
-    
+            await daoUsuarios.updateOne({ _id: userId }, usuario);
+
+            return usuario.cart;
+
         } catch (error) {
             throw new Error(`Error en CartsDaoMongoose.updateOne: ${error.message}`);
         }
     }
-    
-    
-    
-    
 
-    async deleteProductFromCart(cartId, productId) {
+
+
+
+
+    async deleteProductFromCart(req, cartId, productId) {
         try {
             if (!cartId || !productId) {
                 const error = new Error("Se requieren cartId y productId.");
                 error.code = errorMan.INCORRECT_DATA;
                 throw error;
             }
-
-            const cart = await this.cartModel.findById(cartId);
+            const userId = req.user._id;
+            const usuario = await daoUsuarios.findById(userId);
+            const cart = req.user.cart
 
             if (!cart) {
                 const error = new Error("Carrito no encontrado");
@@ -101,11 +105,17 @@ export class CartsDaoMongoose {
                 throw error;
             }
 
-            cart._productos = cart._productos.filter(
-                (product) => product._id !== productId
-            );
+            const productIndex = cart._productos.findIndex(product => product._id === productId);
+            if (productIndex === -1) {
+                const error = new Error("Producto no encontrado en el carrito");
+                error.code = errorMan.NOT_FOUND;
+                throw error;
+            }
 
-            await cart.save();
+            // Eliminar el producto del carrito
+            cart._productos.splice(productIndex, 1);
+
+            await daoUsuarios.updateOne({ _id: userId }, { cart: cart });
 
             return toPOJO(cart);
         } catch (error) {
@@ -113,25 +123,17 @@ export class CartsDaoMongoose {
         }
     }
 
-    async deleteProductsFromCart(cartId) {
+    async deleteProductsFromCart(user) {
         try {
-            if (!cartId) {
-                const error = new Error("Se requiere un cartId.");
+            if (!user) {
+                const error = new Error("Se requiere un user.");
                 error.code = errorMan.INCORRECT_DATA;
                 throw error;
             }
 
-            const cart = await this.cartModel.findById(cartId);
+            cart._productos = [];
 
-            if (!cart) {
-                const error = new Error("Carrito no encontrado");
-                error.code = errorMan.NOT_FOUND;
-                throw error;
-            }
-
-            cart.productos = [];
-
-            await cart.save();
+            await daoUsuarios.updateOne({ user: user }, { cart: cart });
 
             return toPOJO(cart);
         } catch (error) {
@@ -145,9 +147,9 @@ export class CartsDaoMongoose {
                 error.code = errorMan.INCORRECT_DATA;
                 throw error;
             }
-    
-            const result = await this.cartModel.findByIdAndDelete(cartId);
-    
+
+            const result = await this.cartsModel.findByIdAndDelete(cartId);
+
             if (!result) {
                 const error = new Error("No se encontró el carrito a eliminar.");
                 error.code = errorMan.NOT_FOUND;
@@ -158,5 +160,16 @@ export class CartsDaoMongoose {
             throw new Error(`Error en CartsDaoMongoose.deleteCart: ${error.message}`);
         }
     }
-    
+
+    async getLastCart() {
+        try {
+            // Obtener el último carrito creado en la base de datos ordenando por fecha de creación descendente y limitando a 1 resultado
+            const lastCart = await this.cartsModel.findOne().sort({ createdAt: -1 }).limit(1).lean();
+
+            return lastCart;
+        } catch (error) {
+            throw new Error(`Error en CartsDaoMongoose.getLastCart: ${error.message}`);
+        }
+    }
+
 }

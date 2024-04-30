@@ -5,7 +5,7 @@ import { MONGODB_CNX_STR, SESSION_SECRET } from '../config/config.js'
 const MongoStore = new connectMongo({
     mongoUrl: MONGODB_CNX_STR,
     collectionName: 'sessions', 
-    ttl: 60 * 60 * 24, // 1d
+    ttl: 60 * 60 * 24, 
 });
 
 
@@ -15,7 +15,7 @@ export const sessionConfig = session({
     saveUninitialized: false,
     store: MongoStore, 
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24, // 1 día
+        maxAge: 1000 * 60 * 60 * 24, 
         secure: false, 
         httpOnly: true,
     }

@@ -15,31 +15,43 @@ export class UsuariosDaoMongoose {
     async readOne(query) {
         return toPOJO(await this.usuariosModel.findOne(query).lean())
     }
-    
+
     async readMany(query) {
         return toPOJO(await this.usuariosModel.find(query).lean())
     }
-    
+
     async findById(id) {
         return toPOJO(await this.usuariosModel.findById(id).lean());
     }
 
-    async updateOne(query, data) {
-        const options = { new: true }
-        return await this.usuariosModel.findOneAndUpdate(query, data, options).lean();
+
+    async findByCartId(id) {
+    try {
+        const usuario = await this.usuariosModel.find({ "cart._id": id });
+        return usuario;
+    } catch (error) {
+        // Manejo de errores
+        throw new Error(`Error en DAO de usuarios findByCartId: ${error.message}`);
     }
+}
+
+
+    async updateOne(query, data) {
+    const options = { new: true }
+    return await this.usuariosModel.findOneAndUpdate(query, data, options).lean();
+}
     
 
     async updateMany(query, data) {
-        throw new Error('NOT IMPLEMENTED')
-    }
+    throw new Error('NOT IMPLEMENTED')
+}
 
     async deleteOne(query) {
-        return await this.usuariosModel.findOneAndDelete(query).lean();
-    }
+    return await this.usuariosModel.findOneAndDelete(query).lean();
+}
 
     async deleteMany(query) {
-        throw new Error('NOT IMPLEMENTED')
-    }
+    throw new Error('NOT IMPLEMENTED')
+}
 }
 

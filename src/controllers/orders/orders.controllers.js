@@ -7,12 +7,11 @@ import { usuariosService } from "../../services/index.js";
 
 export async function postOrderController(req, res, next) {
     try {
-        const cartId = req.params.cid;
-        const cart = await cartsService.readOne(cartId);
+        const cart = req.user.cart
         if (!cart) {
             throw new Error(errorMan.NOT_FOUND.message);
         }
-        const userId = cart.userId;
+        const userId = req.user._id
         const user = await usuariosService.obtenerUsuarioPorId(userId);
         if (!user) {
             throw new Error('Usuario no encontrado');
@@ -23,7 +22,7 @@ export async function postOrderController(req, res, next) {
         let amount = 0;
         const productsWithoutStock = [];
         for (const product of cart._productos) {
-            const { _id, quantity } = product;
+            const { _id, title, quantity } = product;
             const productInfo = await productService.obtenerProductoPorId(_id);
 
             if (!productInfo || productInfo.stock < quantity) {
@@ -49,9 +48,8 @@ export async function postOrderController(req, res, next) {
             amount,
             products: cart._productos
         });
-
-        await cartsService.deleteProductsFromCart(cartId);
-
+        
+        await cartsService.deleteProductsFromCart(user);
         res.status(201).json(newOrder);
     } catch (error) {
         next(error);

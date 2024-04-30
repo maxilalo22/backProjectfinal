@@ -124,7 +124,6 @@ export class CartsDaoFiles {
 
             return updatedCart;
         } catch (error) {
-            console.log("Error al agregar producto al carrito: ", error);
             throw new Error(
                 `Error al agregar el producto al carrito: ${error.message}`
             );

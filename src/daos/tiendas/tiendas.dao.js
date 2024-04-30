@@ -13,11 +13,9 @@ if (MODO_EJECUCION === 'online') {
     if (!daoTiendas) {
         const tiendasModel = model('tiendas', tiendasSchema)
         daoTiendas = new TiendasDaoMongoose(tiendasModel)
-        console.log('persistiendo tiendas en: mongodb')
     }
 } else {
     daoTiendas = new TiendasDaoFiles(RUTA_TIENDAS_JSON)
-    console.log('persistiendo tiendas en: sistema de archivos')
 }
 
 export function getDaoTiendas() {

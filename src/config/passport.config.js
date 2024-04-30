@@ -49,22 +49,16 @@ passport.use('login', new LocalStrategy({ usernameField: 'email', passReqToCallb
     try {
         const user = await usuariosDao.readOne({ email: email });
         if (!user) {
-            console.log('Usuario inexistente');
             return done(null, false);
         }
         if (!isValidPassword(user, password)) {
-            console.log('Contraseña incorrecta');
             return done(null, false, { message: 'Contraseña incorrecta' });
         }
         
-        // Establecer la sesión de usuario
         req.session.user = user.email;
 
-        // Establecer la sesión de administrador si el usuario es un administrador
         req.session.admin = user.role === 'admin';
 
-        console.log(`Inicio de sesión exitoso como ${user.role}`);
-        
         return done(null, user);
     } catch (error) {
         return done(error);
@@ -74,20 +68,5 @@ passport.use('login', new LocalStrategy({ usernameField: 'email', passReqToCallb
 export default initializePassport;
 
 
- /* passport.use('login', new LocalStrategy({ usernameField: 'email' }, async (username, password, done) => {
-        try {
-            const user = await usuariosDao.readOne({ email: username });
-            if (!user) {
-                console.log('Usuario inexistente');
-                return done(null, false);
-            }
-            if (!isValidPassword(user, password)) {
-                console.log('Contraseña incorrecta');
-                return done(null, false);
-            }
-            return done(null, user);
-        } catch (error) {
-            return done(error);
-        }
-    })); */
+
 

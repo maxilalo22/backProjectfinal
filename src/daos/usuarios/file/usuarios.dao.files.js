@@ -27,17 +27,13 @@ export class UsuariosDaoFiles {
 
     async create(data) {
         try {
-            console.log('Datos recibidos en el DAO:', data); // Mensaje para verificar los datos recibidos en el DAO
             const usuario = new Usuario(data);
             const userPojo = usuario.toPOJO();
-            console.log('Usuario POJO creado:', userPojo); // Mensaje para verificar el objeto usuarioPojo
             const usuarios = await this.#readUsuarios();
             usuarios.push(userPojo);
-            console.log('Usuarios actualizados:', usuarios); // Mensaje para verificar el array de usuarios actualizado
             await this.#writeUsuarios(usuarios);
             return userPojo;
         } catch (error) {
-            console.error('Error en el DAO:', error); // Mensaje para registrar cualquier error que ocurra
             throw error;
         }
     }

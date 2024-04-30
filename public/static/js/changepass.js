@@ -15,7 +15,6 @@ formChangePassword.addEventListener('submit', async event => {
     });
 
     if (response.status === 200) {
-        console.log("Contraseña cambiada correctamente!");
         alert("Contraseña cambiada correctamente!");
         window.location.href = '/login';
     } else {

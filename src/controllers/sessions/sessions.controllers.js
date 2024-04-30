@@ -6,7 +6,6 @@ import {
 export async function loginUser(req, res, next) {
     try {
         const User = await authenticateUser(req.body);
-        console.log("Authenticated user:", User); // Agregar mensaje para verificar si el usuario se autentica correctamente
         if (!User) {
             const error = new Error("Invalid credentials");
             error.code = 401;
@@ -19,7 +18,6 @@ export async function loginUser(req, res, next) {
             payload: User,
         });
     } catch (error) {
-        console.error("Error occurred during user login:", error); // Agregar mensaje para registrar cualquier error que ocurra durante el inicio de sesión
         next(error);
     }
 }

@@ -2,7 +2,7 @@ import { hashSync, compareSync, genSaltSync } from 'bcrypt'
 import jwt from "jsonwebtoken"
 import { JWT_PRIVATE_KEY } from '../../config/config.js'
 
-// hash
+
 
 export function hashear(frase) {
     if (!frase) throw new Error('cannot hash invalid parameter: ' + frase)
@@ -14,7 +14,7 @@ export function hasheadasSonIguales(recibida, almacenada) {
     return compareSync(recibida, almacenada)
 }
 
-// jwt
+
 
 export function encriptar(data) {
     return new Promise((resolve, reject) => {
@@ -48,9 +48,6 @@ export function desencriptar(token) {
 }
 
 export function generarTokenDeRestablecimiento(email) {
-    // Generar un token con la dirección de correo electrónico y una clave secreta
-    // Puedes personalizar la duración de validez del token y otras opciones según tus necesidades
     const token = jwt.sign({ email: email }, JWT_PRIVATE_KEY, { expiresIn: '30m' });
-    
     return token;
 }

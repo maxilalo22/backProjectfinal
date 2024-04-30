@@ -1,56 +1,8 @@
-/* import { Router } from 'express'
-import passport from 'passport'
-
-import { appendJwtAsCookie, removeJwtFromCookies } from '../../src/middlewares/authentication.js'
-
-export const sesionesRouter = Router()
-
-sesionesRouter.post('/',
-    passport.authenticate('local-login',
-        { failWithError: true, session: false }),
-    appendJwtAsCookie,
-    async function (req, res) {
-        res['creado'](req.user)
-    },
-)
-
-sesionesRouter.get('/current',
-    passport.authenticate('jwt',
-        { failWithError: true, session: false }),
-    function (req, res) {
-        res['ok'](req.user)
-    },
-)
-
-sesionesRouter.delete('/current',
-    removeJwtFromCookies,
-    (req, res) => {
-        res['ok']({ message: 'logout OK' })
-    }
-) */
-
-/* import { Router } from 'express';
-import passport from 'passport'
-import { appendJwtAsCookie, removeJwtFromCookies } from '../../middlewares/authentication.js'
-
-export const sesionesRouter = Router();
-
-sesionesRouter.post('/', passport.authenticate('local-login', { failWithError: true, session: false }), appendJwtAsCookie, async function (req, res) {
-    res['creado'](req.user);
-});
-
-sesionesRouter.get('/current', passport.authenticate('jwt', { failWithError: true, session: false }), function (req, res) {
-    res['ok'](req.user);
-});
-
-sesionesRouter.delete('/current', removeJwtFromCookies, (req, res) => {
-    res['ok']({ message: 'Logout OK' });
-}); */
 
 import { Router } from 'express';
 import { auth } from '../../middlewares/authentication.js';
 import passport from 'passport';
-import { cartsService } from '../../services/carts.services.js';
+
 
 export const sesionesRouter = Router();
 
@@ -59,16 +11,13 @@ sesionesRouter.get('/', (req, res) => {
 });
 
 sesionesRouter.post('/login', passport.authenticate('login', { failureRedirect: '/faillogin' }), async (req, res) => {
-    console.log('Usuario autenticado:', req.user);
     if (req.user) {
-        console.log(req.user)
-        req.session.user = req.user.email;
-        req.session.cartId = req.user.cart._id
         req.session.admin = req.user.role === 'admin';
+        req.session.user = req.user.email;
+        
         const usuarioDTO = {
             nombre: req.user.name,
             email: req.user.email,
-            cart: req.user.cart._id
         };
         res.send({ status: 'success', payload: usuarioDTO });
     } else {
@@ -79,7 +28,6 @@ sesionesRouter.post('/login', passport.authenticate('login', { failureRedirect: 
 
 
 sesionesRouter.get('/faillogin', (req, res) => {
-    console.log('Intento de inicio de sesión fallido');
     res.status(401).send({ error: 'Intento de inicio de sesión fallido' });
 });
 

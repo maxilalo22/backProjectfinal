@@ -12,11 +12,9 @@ if (MODO_EJECUCION === 'online') {
     if (!daoCarts) {
         const cartsModel = model('carts', cartSchema)
         daoCarts = new CartsDaoMongoose(cartsModel);
-        console.log('persistiendo carritos en: mongodb');
     }
 } else {
     daoCarts = new CartsDaoFiles(RUTA_USUARIOS_JSON);
-    console.log('persistiendo carritos en: sistema de archivos');
 }
 
 export function getDaoCarts() {

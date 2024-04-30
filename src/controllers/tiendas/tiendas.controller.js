@@ -1,6 +1,6 @@
 import { tiendasService } from "../../services/index.js"
 
-// registrar
+
 export async function postController(req, res, next) {
     try {
         const tienda = await tiendasService.registrar(req.body)
@@ -10,7 +10,6 @@ export async function postController(req, res, next) {
     }
 }
 
-// agregar producto
 export async function postProductosController(req, res, next) {
     try {
         await tiendasService.agregarProducto(req.params.id, req.body.idProducto)

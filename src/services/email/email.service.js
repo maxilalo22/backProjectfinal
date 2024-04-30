@@ -6,14 +6,11 @@ let emailService
 
 // @ts-ignore
 if (MODO_EJECUCION === 'online') {
-    // singleton!
     if (!emailService) {
         emailService = new EmailServiceNodemailer(NODEMAILER_GMAIL_OPTIONS)
-        console.log('enviando mails a traves de: gmail')
     }
 } else {
     emailService = new EmailServiceConsola()
-    console.log('enviando mails a traves de: la consola')
 }
 
 export function getEmailService() {

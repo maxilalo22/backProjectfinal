@@ -10,7 +10,6 @@ addToCartButtons.forEach(addToCart => {
         try {
             const authResponse = await fetch('/api/sesiones/auth');
             const authData = await authResponse.json();
-            console.log(authData)
             const usuarioAutenticado = authData.autenticado
 
             if (!usuarioAutenticado) {
@@ -25,12 +24,11 @@ addToCartButtons.forEach(addToCart => {
             if (reqUserResponse.ok) {
                 const userData = await reqUserResponse.json();
                 const cartId = userData.payload.cartId; 
-                console.log('Cart ID:', cartId);
 
                 const addToCartResponse = await fetch(`/api/carts/${cartId}/product/${productId}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ quantity }) // Incluir la cantidad en el cuerpo de la solicitud
+                    body: JSON.stringify({ quantity }) 
                 });
 
                 if (addToCartResponse.ok) {

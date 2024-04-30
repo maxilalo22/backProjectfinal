@@ -1,7 +1,6 @@
 import { Router } from 'express'
 import { productService } from '../../services/product.services.js'
-import { getCartController } from '../../controllers/carts/cart.controller.js'
-import { auth } from '../../middlewares/authentication.js'
+import { ordersDao } from '../../services/index.js'
 
 export const webRouter = Router()
 
@@ -25,18 +24,13 @@ webRouter.get('/cart', async (req, res) => {
         if (req.user && req.user.cart) {
             cart = req.user.cart;
         }
-        
-        // Obtener los productos del carrito
         const productsInCart = cart._productos;
-        
-        // Array para almacenar la información completa de cada producto
         const productsInfo = [];
-
-        // Recorrer cada producto en el carrito
+        let totalCart = 0; 
         for (const product of productsInCart) {
-            // Obtener la información del producto utilizando su ID
             const productInfo = await productService.obtenerProductoPorId(product._id);
             const total = productInfo.price * product.quantity;
+            totalCart += total; 
             if (productInfo) {
                 productsInfo.push({
                     _id: product._id,
@@ -48,7 +42,7 @@ webRouter.get('/cart', async (req, res) => {
             }
         }
         
-        res.render('cart.handlebars', { pageTitle: 'Carrito de Compra', cart: productsInfo });
+        res.render('cart.handlebars', { pageTitle: 'Carrito de Compra', cart: productsInfo, totalCart: totalCart });
     } catch (error) {
         console.error(error);
         res.status(500).send('Error obteniendo productos.');
@@ -56,22 +50,12 @@ webRouter.get('/cart', async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-// registrar usuario
-
 webRouter.get('/register', (req, res) => {
     res.render('register.handlebars', {
         pageTitle: 'Registro'
     })
 })
 
-// modificar usuario
 
 webRouter.get('/resetpassword', (req, res) => {
     res.render('resetpassword.handlebars', {
@@ -79,7 +63,6 @@ webRouter.get('/resetpassword', (req, res) => {
     })
 })
 
-// ver usuario
 
 webRouter.get('/profile',
     (req, res) => {
@@ -89,7 +72,6 @@ webRouter.get('/profile',
         })
     })
 
-// iniciar sesion
 
 webRouter.get('/login', (req, res) => {
     res.render('login.handlebars', {
@@ -97,14 +79,7 @@ webRouter.get('/login', (req, res) => {
     })
 })
 
-webRouter.get('/cart', getCartController, (req, res) => {
-    res.render('cart.handlebars', {
-        pageTitle: 'Cart'
-    })
-})
-
 webRouter.get('/edit', (req, res) => {
-    //console.log(req.user._id)
     try {
         let role = null;
         let usuarioId = null;
@@ -113,11 +88,33 @@ webRouter.get('/edit', (req, res) => {
             role = req.user.role;
             if (role === "user") role = 'Usuario Común';
         }
-        console.log("Web:", usuarioId);
         res.render('edit.handlebars', { pageTitle: 'Editar mis datos', usuarioId, role });
     } catch (error) {
-        console.log(error)
+        throw error
     }
-
 })
+
+webRouter.get(`/ticket/:orderId`, async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+        const order = await ordersDao.readOne(orderId);
+
+        const productsWithDetails = [];
+
+        for (const product of order.products) {
+            const productDetails = await productService.obtenerProductoPorId(product._id);
+            productsWithDetails.push({
+                _id: product._id,
+                title: productDetails.title, 
+                quantity: product.quantity
+            });
+        }
+        order.products = productsWithDetails;
+        res.render('compraFinalizada.handlebars', { order });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 

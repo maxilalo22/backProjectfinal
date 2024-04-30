@@ -12,7 +12,6 @@ export class UsuariosService {
 
     async registrar(datos) {
         const usuario = new Usuario(datos);
-        console.log(usuario);
         const hashedPassword = hashear(datos.password);
         usuario.password = hashedPassword;
         const encryptedPassword = await encriptar(datos.password);
@@ -46,14 +45,11 @@ export class UsuariosService {
 
     async resetPassword(userData) {
         try {
-            console.log('Iniciando resetPassword en usuariosService');
             const { email, newPassword } = userData;
             const user = await this.usuariosDao.readOne({ email });
-            console.log('Usuario encontrado:', user);
             if (user) {
                 const updatedUser = { ...user, password: newPassword };
                 const updatedUserDoc = await this.usuariosDao.updateOne({ _id: user._id }, updatedUser);
-                console.log('Usuario actualizado:', updatedUserDoc);
                 return toPOJO(updatedUserDoc);
             }
             return null;

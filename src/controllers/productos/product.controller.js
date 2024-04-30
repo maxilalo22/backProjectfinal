@@ -18,7 +18,6 @@ export async function getProductDetails(req, res, next) {
         }
         res.render('productDetails', { product });
     } catch (error) {
-        console.log("Error en getProductDetails:", error);
         next(error);
     }
 }
@@ -29,7 +28,6 @@ export async function postController(req, res, next) {
         const producto = await productService.agregarProducto(req.body)
         res.created(producto)
     } catch (error) {
-        console.log("Error en postController:", error);
         next(error)
     }
 }
@@ -43,7 +41,6 @@ export async function deleteController(req, res, next) {
         }
         res.send(productoEliminado);
     } catch (error) {
-        console.log("Error en deleteController:", error);
         next(error);
     }
 }
@@ -58,7 +55,6 @@ export async function putController(req, res, next) {
         }
         res.send(productoActualizado);
     } catch (error) {
-        console.log("Error en updateController:", error);
         next(error);
     }
 }

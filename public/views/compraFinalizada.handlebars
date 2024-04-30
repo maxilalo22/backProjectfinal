@@ -1,0 +1,30 @@
+<div>
+        <h1>---- Compra Finalizada ----</h1>
+        <h3>Ticket de compra</h3>
+        <div class="order-details">
+            <div class="order-item">
+                <span>Código de Orden:</span>
+                <span>{{ order.code }}</span>
+            </div>
+            <div class="order-item">
+                <span>Fecha de Compra:</span>
+                <span>{{ order.purchase_datetime }}</span>
+            </div>
+            <div class="order-item">
+                <span>Monto Total:</span>
+                <span>{{ order.amount }}</span>
+            </div>
+            <div class="order-item">
+                <span>Comprador:</span>
+                <span>{{ order.purchaser }}</span>
+            </div>
+            <div class="order-item">
+                <span>Productos:</span>
+                <ul>
+                    {{#each order.products }}
+                        <li>{{ this.quantity }} x {{ this.title }}</li>
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+    </div>

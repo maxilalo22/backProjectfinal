@@ -13,11 +13,9 @@ if (MODO_EJECUCION === 'online') {
     if (!daoProductos) {
         const productosModel = model('productos', productsSchema)
         daoProductos = new ProductsDaoMongoose(productosModel)
-        console.log('persistiendo productos en: mongodb')
     }
 } else {
     daoProductos = new ProductosDaoFiles(RUTA_USUARIOS_JSON)
-    console.log('persistiendo productos en: sistema de archivos')
 }
 
 export function getDaoProductos() {

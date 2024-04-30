@@ -5,11 +5,10 @@ import { encriptar, generarTokenDeRestablecimiento } from "../../daos/utils/encr
 export async function postController(req, res, next) {
     try {
         const { nombre, email, password, role } = req.body;
-        const encryptedPassword = await encriptar(password); // Encripta la contraseña
-        const usuarioPojo = { nombre, email, password: encryptedPassword, role }; // Crea un objeto usuarioPojo
-        const usuario = await usuariosService.registrar(usuarioPojo); // Registra el usuario con el servicio
+        const encryptedPassword = await encriptar(password); 
+        const usuarioPojo = { nombre, email, password: encryptedPassword, role };
+        const usuario = await usuariosService.registrar(usuarioPojo); 
         res.status(201).json(usuario);
-        console.log('Usuario creado:', usuario);
     } catch (error) {
         next(error);
     }

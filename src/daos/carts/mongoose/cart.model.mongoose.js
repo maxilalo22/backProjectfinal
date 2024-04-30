@@ -1,9 +1,9 @@
 import { Schema } from 'mongoose';
-import { randomUUID } from "node:crypto";
+import { v4 as uuidv4 } from 'uuid';
 
 const cartSchema = new Schema(
     {
-        _id: { type: String, default: randomUUID },
+        _id: { type: String, default: uuidv4 },
         _productos: {
             type: [
                 {

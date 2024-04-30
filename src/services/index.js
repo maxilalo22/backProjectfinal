@@ -23,5 +23,5 @@ const usuariosDao = getDaoUsuarios()
 const productosDao = getDaoProductos()
 const cartsDao = getDaoCarts()
 
-const ordersDao = getDaoOrders()
+export const ordersDao = getDaoOrders()
 export const usuariosService = new UsuariosService({smsService, usuariosDao, productosDao })

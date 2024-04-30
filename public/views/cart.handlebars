@@ -9,15 +9,18 @@
                 <h2>{{this.title}}</h2>
                 <p>Precio: ${{this.price}}</p>
                 <p>Cantidad: {{this.quantity}}</p>
-                <p>Total: ${{total}}</p>
+                
                 <button class="removeFromCart" data-product-id="{{this._id}}">Eliminar</button>
             </li>
         {{/each}}
     </ul>
-    <button class="checkout">Pagar</button>
+    <p>Total Carrito: ${{totalCart}}</p>
+    <button class="checkout">Finalizar Compra!</button>
 {{else}}
     <p>El carrito está vacío.</p>
 {{/if}}
+
+<script src="/static/js/cart.js"></script>
 
 
 
